@@ -65,17 +65,24 @@ builder.Services.AddAuthentication(x =>
         OnTokenValidated = async context =>
         {
             var token = context.SecurityToken as JwtSecurityToken;
-            await FileLogger.LogAsync($"Passed jwt vailidation with access token: ${token?.RawData}");
+            await FileLogger.LogAsync($"Token vailidation passed with access token: {token?.RawData}");
         },
         OnAuthenticationFailed = async context =>
         {
-            await FileLogger.LogAsync(context.Request.Headers.ContainsKey("Authorization")
-                ? $"Failed jwt validation with access token: ${context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty)}"
-                : $"Authorization header not found!");
+            string tokenString = string.Empty;
+            if (context.Request.Headers.ContainsKey("Authorization"))
+            {
+                tokenString = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            }
+            var message = context.Exception is SecurityTokenExpiredException
+                ? $"Token expired: {context.Exception.Message} at {DateTime.UtcNow.ToLongTimeString()}. Token: {tokenString}"
+                : $"Token validation failed: {context.Exception.Message} at {DateTime.UtcNow.ToLongTimeString()}. Token: {tokenString}";
+            await FileLogger.LogAsync(message);
         },
         OnChallenge = async context =>
         {
-            await FileLogger.LogAsync($"Request not include token!");
+            if (string.IsNullOrEmpty(context.Request.Headers["Authorization"]))
+                await FileLogger.LogAsync($"Request not include token!");
         }
     };
 });
