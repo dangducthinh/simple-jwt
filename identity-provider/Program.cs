@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Name = "Authorization",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
         Description = "Please enter a valid token"

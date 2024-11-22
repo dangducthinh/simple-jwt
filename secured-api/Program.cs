@@ -1,14 +1,17 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SecuredApi;
 using SecuredApi.AppSetting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "secured-api", Version = "v1" });
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Secured API", Version = "v1" });
 
     var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
@@ -28,6 +31,9 @@ builder.Services.AddSwaggerGen(options =>
     };
 
     options.AddSecurityRequirement(securityRequirement);
+
+    // Add OperationFilter to include token in requests
+    options.OperationFilter<SwaggerBearerAuthOperationFilter>();
 });
 builder.Services.AddControllers();
 
@@ -53,6 +59,25 @@ builder.Services.AddAuthentication(x =>
         ValidIssuer = jwtSettings.Issuer,
         ValidateAudience = false
     };
+
+    x.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var token = context.SecurityToken as JwtSecurityToken;
+            await FileLogger.LogAsync($"Passed jwt vailidation with access token: ${token?.RawData}");
+        },
+        OnAuthenticationFailed = async context =>
+        {
+            await FileLogger.LogAsync(context.Request.Headers.ContainsKey("Authorization")
+                ? $"Failed jwt validation with access token: ${context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty)}"
+                : $"Authorization header not found!");
+        },
+        OnChallenge = async context =>
+        {
+            await FileLogger.LogAsync($"Request not include token!");
+        }
+    };
 });
 
 var app = builder.Build();
@@ -62,6 +87,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    // Add redirection to Swagger UI
     app.Use(async (context, next) =>
     {
         if (context.Request.Path == "/")

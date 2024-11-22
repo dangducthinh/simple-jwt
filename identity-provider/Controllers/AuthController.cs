@@ -18,10 +18,10 @@ public class AuthController : ControllerBase
         _jwtSettings = jwtSettings;
     }
 
-    [HttpGet("HealthCheck")]
+    [HttpGet(nameof(HealthCheck))]
     public IActionResult HealthCheck() => Ok("Service ready!");
 
-    [HttpPost("login")]
+    [HttpPost(nameof(Login))]
     public ActionResult<LoginResponse> Login(LoginRequest request)
     {
         // Hardcoded user validation
@@ -38,9 +38,16 @@ public class AuthController : ControllerBase
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, "UserRole"),
+            new Claim("Email", "some_email@groovetechnology.vn"),
+            new Claim("Phone", "0906787482"),
+        };
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiredTimeInMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _jwtSettings.Issuer
