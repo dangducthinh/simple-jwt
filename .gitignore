@@ -1,0 +1,51 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+angular-single-page/node_modules
+angular-single-page/npm-debug.log
+angular-single-page/yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+angular-single-page/.angular/cache
+.sass-cache/
+/connect.lock
+angular-single-page/coverage
+angular-single-page/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+identity-provider/bin
+identity-provider/obj
+
+mvc-app/bin
+mvc-app/obj
+
+secured-api/bin
+secured-api/obj
