@@ -65,7 +65,9 @@ if (app.Environment.IsDevelopment())
     app.Use(async (context, next) =>
     {
         if (context.Request.Path == "/")
-        { context.Response.Redirect("/swagger"); }
+        {
+            context.Response.Redirect("/swagger");
+        }
         else
         {
             await next();
