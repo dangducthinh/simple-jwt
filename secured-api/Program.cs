@@ -78,8 +78,8 @@ builder.Services.AddAuthentication(x =>
                 tokenString = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             }
             var message = context.Exception is SecurityTokenExpiredException
-                ? $"Token expired: {context.Exception.Message} at {DateTime.UtcNow.ToLongTimeString()}. Token: {tokenString}"
-                : $"Token validation failed: {context.Exception.Message} at {DateTime.UtcNow.ToLongTimeString()}. Token: {tokenString}";
+                ? $"Token expired: {context.Exception.Message} at {DateTime.Now.ToLongTimeString()}. Token: {tokenString}"
+                : $"Token validation failed: {context.Exception.Message} at {DateTime.Now.ToLongTimeString()}. Token: {tokenString}";
             await FileLogger.LogAsync(message);
         },
         OnChallenge = async context =>

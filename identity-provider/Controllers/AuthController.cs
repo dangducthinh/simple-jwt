@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiredTimeInMinutes),
+            Expires = DateTime.Now.AddMinutes(_jwtSettings.ExpiredTimeInMinutes),
             SigningCredentials = credentials,
             Issuer = _jwtSettings.Issuer
         };
