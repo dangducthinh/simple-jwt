@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class TodoComponent implements OnInit {
   todos: Todo[] = [];
   newTask: string = '';
+  isError: boolean = false;
 
   constructor(private todoService: TodoService) {}
 
@@ -23,8 +24,14 @@ export class TodoComponent implements OnInit {
   }
 
   fetchTodos() {
-    this.todoService.getTodos().subscribe((todos: Todo[]) => {
-      this.todos = todos;
+    this.todoService.getTodos().subscribe({
+      next: (todos: Todo[]) => {
+        this.isError = false;
+        this.todos = todos;
+      },
+      error: (err) => {
+        this.isError = true;
+      }
     });
   }
 }

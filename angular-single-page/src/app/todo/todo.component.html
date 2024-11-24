@@ -1,5 +1,6 @@
 <div class="todo-container">
     <h1>Todo List</h1>
+    <span style="color: red;" *ngIf="isError">Something was wrong!</span>
     <ul class="todo-list">
         <li *ngFor="let todo of todos" class="todo-item">
             {{ todo.id }}. {{ todo.name }}
