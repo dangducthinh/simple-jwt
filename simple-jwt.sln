@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mvc-app", "mvc-app\mvc-app.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "secured-api", "secured-api\secured-api.csproj", "{3C2C41E9-76B3-48F9-80C6-0583D7F864AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console-generate-key", "console-generate-key\console-generate-key.csproj", "{448ECFDC-C66B-423F-86A7-E49AC37088A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{3C2C41E9-76B3-48F9-80C6-0583D7F864AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2C41E9-76B3-48F9-80C6-0583D7F864AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2C41E9-76B3-48F9-80C6-0583D7F864AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{448ECFDC-C66B-423F-86A7-E49AC37088A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{448ECFDC-C66B-423F-86A7-E49AC37088A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{448ECFDC-C66B-423F-86A7-E49AC37088A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{448ECFDC-C66B-423F-86A7-E49AC37088A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

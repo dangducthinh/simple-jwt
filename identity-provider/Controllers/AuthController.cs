@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
+using System.Security.Cryptography;
 using IdentityProvider.AppSetting;
 using IdentityProvider.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +18,10 @@ public class AuthController : ControllerBase
         _jwtSettings = jwtSettings;
     }
 
-    [HttpGet("HealthCheck")]
+    [HttpGet(nameof(HealthCheck))]
     public IActionResult HealthCheck() => Ok("Service ready!");
 
-    [HttpPost("login")]
+    [HttpPost(nameof(Login))]
     public ActionResult<LoginResponse> Login(LoginRequest request)
     {
         // Hardcoded user validation
@@ -37,15 +37,41 @@ public class AuthController : ControllerBase
     private string GenerateJwtToken(string username)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
+
+        var rsa = ImportPrivateKey();
+        var key = new RsaSecurityKey(rsa);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, "UserRole"),
+            new Claim("Email", "some_email@groovetechnology.vn"),
+            new Claim("Phone", "0906787482"),
+        };
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiredTimeInMinutes),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.Now.AddMinutes(_jwtSettings.ExpiredTimeInMinutes),
+            SigningCredentials = credentials,
             Issuer = _jwtSettings.Issuer
         };
+
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    private RSA ImportPrivateKey()
+    {
+        var issuesKey = System.IO.File.ReadAllText(@"C:\RSA_key\issuesKey.pem");
+        var base64 = issuesKey.Replace("-----BEGIN PRIVATE KEY-----", "")
+                        .Replace("-----END PRIVATE KEY-----", "")
+                        .Replace("\n", "")
+                        .Replace("\r", "");
+        var keyBytes = Convert.FromBase64String(base64);
+        var rsa = RSA.Create();
+        rsa.ImportRSAPrivateKey(keyBytes, out _);
+        return rsa;
     }
 }

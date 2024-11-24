@@ -50,5 +50,8 @@ mvc-app/obj
 secured-api/bin
 secured-api/obj
 
+console-generate-key/bin
+console-generate-key/obj
+
 
 .vs
