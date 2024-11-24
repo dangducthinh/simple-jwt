@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using IdentityProvider.AppSetting;
 using IdentityProvider.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +23,7 @@ public class AuthController : ControllerBase
     public IActionResult HealthCheck() => Ok("Service ready!");
 
     [HttpPost(nameof(Login))]
+    [AllowAnonymous]
     public ActionResult<LoginResponse> Login(LoginRequest request)
     {
         // Hardcoded user validation
