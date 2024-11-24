@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from './auth.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,10 +13,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  constructor(private authService: AuthService, private fb: FormBuilder) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+      username: ['user', Validators.required],
+      password: ['password', Validators.required]
     });
   }
   onSubmit(): void {
@@ -25,6 +26,7 @@ export class LoginComponent {
         next: () => {
           // Handle successful login, maybe navigate to another page or show a success message
           console.log('Login successful!');
+          this.router.navigate(['/todo'])
         },
         error: (err: any) => {
           // Handle login error, show an error message
