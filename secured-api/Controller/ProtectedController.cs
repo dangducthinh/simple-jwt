@@ -23,4 +23,17 @@ public class ProtectedController : ControllerBase
 
         return NotFound("Log file not found.");
     }
+
+    [HttpGet]
+    public IActionResult GetTodos()
+    {
+        var listTodo = new List<(int, string)>
+        {
+            (1, "Buy groceries"),
+            (2, "Clean the house"),
+            (3, "Read a book")
+        };
+
+        return Ok(listTodo);
+    }
 }
