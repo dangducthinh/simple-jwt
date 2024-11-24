@@ -1,6 +1,30 @@
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using mvc_app.AppSetting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+if (jwtSettings == null) jwtSettings = new();
+
+var jwtVerifyKey = File.ReadAllText(@"C:\RSA_key\verifyKey.pem");
+var rsa = RSA.Create();
+rsa.ImportFromPem(jwtVerifyKey.ToCharArray());
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            IssuerSigningKey = new RsaSecurityKey(rsa)
+        };
+    });
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -17,7 +41,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

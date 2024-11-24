@@ -1,4 +1,4 @@
-namespace SecuredApi.AppSetting;
+namespace mvc_app.AppSetting;
 
 public class JwtSettings
 {

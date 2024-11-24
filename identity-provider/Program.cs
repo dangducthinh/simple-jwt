@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using IdentityProvider.AppSetting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,7 +39,9 @@ if (jwtSettings == null)
     jwtSettings = new();
 builder.Services.AddSingleton(jwtSettings);
 
-var key = Encoding.ASCII.GetBytes(jwtSettings.SecretKey);
+var jwtVerifyKey = File.ReadAllText(@"C:\RSA_key\verifyKey.pem");
+var rsa = RSA.Create();
+rsa.ImportFromPem(jwtVerifyKey.ToCharArray());
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,11 +53,10 @@ builder.Services.AddAuthentication(x =>
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        IssuerSigningKey = new RsaSecurityKey(rsa),
         ValidateIssuer = true,
         ValidIssuer = jwtSettings.Issuer,
-        ValidateAudience = false,
-        RequireExpirationTime = true
+        ValidateAudience = false
     };
 });
 
